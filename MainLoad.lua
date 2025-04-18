@@ -4477,7 +4477,7 @@ function Library:CreateWindow(p)
 					['Dropdown'] = {
 						['Background'] = Color3.fromRGB(25, 25, 25),
 						['Value Background'] = Color3.fromRGB(20, 20, 20),
-						['Value Stroke'] = Color3.fromRGB(230, 230, 230),
+						['Value Stroke'] = Color3.fromRGB(230, 280, 230),
 						['Dropdown Select'] = {
 							['Background'] = Color3.fromRGB(20, 20, 20),
 							['Search'] = Color3.fromRGB(30, 30, 30),
