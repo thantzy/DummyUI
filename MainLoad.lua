@@ -1,5 +1,3 @@
--- Optimize By Dummy ( TYSM from x2Neptune )
-
 Library = {}
 SaveTheme = {}
 
@@ -7,7 +5,7 @@ local themes = {
 	index = {'Dark'},
 	Dark = {
 		['Shadow'] = Color3.fromRGB(15, 15, 15),
-		['Background'] = Color3.fromRGB(20, 20, 20),
+		['Background'] = Color3.fromRGB(0, 102, 255),
 		['Page'] = Color3.fromRGB(18, 18, 18),
 		['Main'] = Color3.fromRGB(0, 255, 132),
 		['Text & Icon'] = Color3.fromRGB(230, 230, 230),
