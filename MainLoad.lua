@@ -5,7 +5,7 @@ local themes = {
 	index = {'Dark'},
 	Dark = {
 		['Shadow'] = Color3.fromRGB(15, 15, 15),
-		['Background'] = Color3.fromRGB(0, 102, 255),
+		['Background'] = Color3.fromRGB(20, 20, 20),
 		['Page'] = Color3.fromRGB(18, 18, 18),
 		['Main'] = Color3.fromRGB(0, 255, 132),
 		['Text & Icon'] = Color3.fromRGB(230, 230, 230),
@@ -4453,7 +4453,7 @@ function Library:CreateWindow(p)
 			local t = themes[v]
 			Library:setTheme({
 				['Shadow'] = Color3.fromRGB(15, 15, 15),
-				['Background'] = Color3.fromRGB(0, 102, 255),
+				['Background'] = Color3.fromRGB(20, 20, 20),
 				['Page'] = Color3.fromRGB(18, 18, 18),
 				['Main'] = Color3.fromRGB(0, 255, 132),
 				['Text & Icon'] = Color3.fromRGB(230, 230, 230),
