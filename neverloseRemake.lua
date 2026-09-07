@@ -4037,6 +4037,15 @@ function NeverLose:CreateWindow(Config)
 	local SearchIcon = Instance.new("TextLabel")
 	local SearchBox = Instance.new("TextBox")
 	local TabContainer = Instance.new("Frame")
+	local DiscordCard = Instance.new("Frame")
+	local DiscordCardStroke = Instance.new("UIStroke")
+	local DiscordCardCorner = Instance.new("UICorner")
+	local DiscordIcon = Instance.new("ImageLabel")
+	local DiscordIconCorner = Instance.new("UICorner")
+	local DiscordName = Instance.new("TextLabel")
+	local DiscordStats = Instance.new("TextLabel")
+	local DiscordLink = Instance.new("TextLabel")
+	local DiscordButton = Instance.new("TextButton")
 
 	WindowFrame.Name = NeverLose.RandomString();
 	WindowFrame.Parent = NeverLose.ScreenGui;
@@ -4126,6 +4135,30 @@ function NeverLose:CreateWindow(Config)
 				TextTransparency = 0.5
 			})
 
+			NeverLose.PlayAnimate(DiscordCard , SlowyTween , {
+				BackgroundTransparency = 0.350
+			})
+
+			NeverLose.PlayAnimate(DiscordCardStroke , SlowyTween , {
+				Transparency = 0.600
+			})
+
+			NeverLose.PlayAnimate(DiscordIcon , SlowyTween , {
+				ImageTransparency = 0
+			})
+
+			NeverLose.PlayAnimate(DiscordName , SlowyTween , {
+				TextTransparency = 0
+			})
+
+			NeverLose.PlayAnimate(DiscordStats , SlowyTween , {
+				TextTransparency = 0.200
+			})
+
+			NeverLose.PlayAnimate(DiscordLink , SlowyTween , {
+				TextTransparency = 0.100
+			})
+
 			NeverLose.PlayAnimate(RightMenuFrame , SlowyTween , {
 				BackgroundTransparency = 0.600
 			})
@@ -4211,6 +4244,30 @@ function NeverLose:CreateWindow(Config)
 			})
 
 			NeverLose.PlayAnimate(UserSettingButton , SlowyTween , {
+				TextTransparency = 1
+			})
+
+			NeverLose.PlayAnimate(DiscordCard , SlowyTween , {
+				BackgroundTransparency = 1
+			})
+
+			NeverLose.PlayAnimate(DiscordCardStroke , SlowyTween , {
+				Transparency = 1
+			})
+
+			NeverLose.PlayAnimate(DiscordIcon , SlowyTween , {
+				ImageTransparency = 1
+			})
+
+			NeverLose.PlayAnimate(DiscordName , SlowyTween , {
+				TextTransparency = 1
+			})
+
+			NeverLose.PlayAnimate(DiscordStats , SlowyTween , {
+				TextTransparency = 1
+			})
+
+			NeverLose.PlayAnimate(DiscordLink , SlowyTween , {
 				TextTransparency = 1
 			})
 
@@ -4377,7 +4434,7 @@ function NeverLose:CreateWindow(Config)
 	LeftScrollingFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	LeftScrollingFrame.BorderSizePixel = 0
 	LeftScrollingFrame.Position = UDim2.new(0.5, 0, 0, 60)
-	LeftScrollingFrame.Size = UDim2.new(1, -10, 1, -115)
+	LeftScrollingFrame.Size = UDim2.new(1, -10, 1, -170)
 	LeftScrollingFrame.ZIndex = 7
 	LeftScrollingFrame.ScrollBarThickness = 0
 
@@ -4486,6 +4543,194 @@ function NeverLose:CreateWindow(Config)
 			TextTransparency = 0.5
 		})		
 	end)))
+
+	DiscordCard.Name = NeverLose.RandomString();
+	DiscordCard.Parent = LeftMenuFrame;
+	DiscordCard.AnchorPoint = Vector2.new(0.5, 1);
+	DiscordCard.BackgroundColor3 = Color3.fromRGB(17, 19, 26);
+	DiscordCard.BackgroundTransparency = 0.350;
+	DiscordCard.BorderColor3 = Color3.fromRGB(0, 0, 0);
+	DiscordCard.BorderSizePixel = 0;
+	DiscordCard.Position = UDim2.new(0.5, 0, 1, -55);
+	DiscordCard.Size = UDim2.new(1, -14, 0, 48);
+	DiscordCard.ZIndex = 8;
+	DiscordCard.ClipsDescendants = true;
+
+	DiscordCardCorner.CornerRadius = UDim.new(0, 8);
+	DiscordCardCorner.Parent = DiscordCard;
+
+	DiscordCardStroke.Color = Color3.fromRGB(48, 52, 68);
+	DiscordCardStroke.Transparency = 0.600;
+	DiscordCardStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border;
+	DiscordCardStroke.Parent = DiscordCard;
+
+	DiscordIcon.Name = NeverLose.RandomString();
+	DiscordIcon.Parent = DiscordCard;
+	DiscordIcon.AnchorPoint = Vector2.new(0, 0.5);
+	DiscordIcon.BackgroundColor3 = Color3.fromRGB(24, 26, 35);
+	DiscordIcon.BackgroundTransparency = 0.200;
+	DiscordIcon.Position = UDim2.new(0, 7, 0.5, 0);
+	DiscordIcon.Size = UDim2.new(0, 34, 0, 34);
+	DiscordIcon.ZIndex = 9;
+	DiscordIcon.Image = "rbxassetid://10888331510";
+
+	DiscordIconCorner.CornerRadius = UDim.new(0, 7);
+	DiscordIconCorner.Parent = DiscordIcon;
+
+	DiscordName.Name = NeverLose.RandomString();
+	DiscordName.Parent = DiscordCard;
+	DiscordName.BackgroundColor3 = Color3.fromRGB(255, 255, 255);
+	DiscordName.BackgroundTransparency = 1.000;
+	DiscordName.Position = UDim2.new(0, 47, 0, 5);
+	DiscordName.Size = UDim2.new(1, -50, 0, 14);
+	DiscordName.ZIndex = 9;
+	DiscordName.Font = Enum.Font.GothamBold;
+	DiscordName.Text = "ThanHub";
+	DiscordName.TextColor3 = Color3.fromRGB(255, 255, 255);
+	DiscordName.TextSize = 11.000;
+	DiscordName.TextXAlignment = Enum.TextXAlignment.Left;
+	DiscordName.TextTruncate = Enum.TextTruncate.AtEnd;
+
+	DiscordStats.Name = NeverLose.RandomString();
+	DiscordStats.Parent = DiscordCard;
+	DiscordStats.BackgroundColor3 = Color3.fromRGB(255, 255, 255);
+	DiscordStats.BackgroundTransparency = 1.000;
+	DiscordStats.Position = UDim2.new(0, 47, 0, 19);
+	DiscordStats.Size = UDim2.new(1, -50, 0, 14);
+	DiscordStats.ZIndex = 9;
+	DiscordStats.Font = Enum.Font.GothamMedium;
+	DiscordStats.Text = "● 10.5k Online  •  198k Total";
+	DiscordStats.TextColor3 = Color3.fromRGB(160, 168, 185);
+	DiscordStats.TextSize = 8.500;
+	DiscordStats.TextXAlignment = Enum.TextXAlignment.Left;
+	DiscordStats.TextTruncate = Enum.TextTruncate.AtEnd;
+
+	DiscordLink.Name = NeverLose.RandomString();
+	DiscordLink.Parent = DiscordCard;
+	DiscordLink.BackgroundColor3 = Color3.fromRGB(255, 255, 255);
+	DiscordLink.BackgroundTransparency = 1.000;
+	DiscordLink.Position = UDim2.new(0, 47, 0, 32);
+	DiscordLink.Size = UDim2.new(1, -50, 0, 12);
+	DiscordLink.ZIndex = 9;
+	DiscordLink.Font = Enum.Font.GothamMedium;
+	DiscordLink.Text = "discord.gg/thanhub";
+	DiscordLink.TextColor3 = Color3.fromRGB(88, 101, 242);
+	DiscordLink.TextSize = 8.500;
+	DiscordLink.TextXAlignment = Enum.TextXAlignment.Left;
+
+	DiscordButton.Name = NeverLose.RandomString();
+	DiscordButton.Parent = DiscordCard;
+	DiscordButton.BackgroundTransparency = 1.000;
+	DiscordButton.Size = UDim2.fromScale(1, 1);
+	DiscordButton.Text = "";
+	DiscordButton.AutoButtonColor = false;
+	DiscordButton.ZIndex = 10;
+
+	NeverLose:AddSignal(DiscordButton.MouseEnter:Connect(LPH_NO_VIRTUALIZE(function()
+		NeverLose.PlayAnimate(DiscordCard, FastTween, {
+			BackgroundTransparency = 0.150
+		})
+		NeverLose.PlayAnimate(DiscordCardStroke, FastTween, {
+			Color = Color3.fromRGB(88, 101, 242),
+			Transparency = 0.200
+		})
+		NeverLose.PlayAnimate(DiscordLink, FastTween, {
+			TextColor3 = Color3.fromRGB(120, 135, 255)
+		})
+	end)))
+
+	NeverLose:AddSignal(DiscordButton.MouseLeave:Connect(LPH_NO_VIRTUALIZE(function()
+		NeverLose.PlayAnimate(DiscordCard, FastTween, {
+			BackgroundTransparency = 0.350
+		})
+		NeverLose.PlayAnimate(DiscordCardStroke, FastTween, {
+			Color = Color3.fromRGB(48, 52, 68),
+			Transparency = 0.600
+		})
+		NeverLose.PlayAnimate(DiscordLink, FastTween, {
+			TextColor3 = Color3.fromRGB(88, 101, 242)
+		})
+	end)))
+
+	NeverLose:AddSignal(DiscordButton.MouseButton1Click:Connect(LPH_NO_VIRTUALIZE(function()
+		local invite = "https://discord.gg/thanhub";
+		local copied = false;
+		pcall(function()
+			local sc = setclipboard or set_clipboard or toclipboard or (syn and syn.write_clipboard);
+			if sc then
+				sc(invite);
+				copied = true;
+			end;
+		end);
+		Logging.new("message-circle", copied and "Discord invite copied! (discord.gg/thanhub)" or "Join at discord.gg/thanhub", 3.5);
+	end)))
+
+	task.spawn(function()
+		local inviteApi = "https://discord.com/api/v10/invites/thanhub?with_counts=true";
+		local assetFolder = "ThanHub_Assets";
+		local iconFile = assetFolder .. "/thanhub_icon.png";
+		local defaultIconUrl = "https://cdn.discordapp.com/icons/1339739723693948989/110a7c31f8a415e98e74305467f6be3b.png?size=128";
+
+		local function updateCachedIcon(targetUrl, targetPath)
+			pcall(function()
+				if not isfolder(assetFolder) then pcall(makefolder, assetFolder) end;
+				if isfile and isfile(targetPath) and getcustomasset then
+					DiscordIcon.Image = getcustomasset(targetPath);
+				else
+					local s, bin = pcall(game.HttpGet, game, targetUrl);
+					if s and bin and #bin > 500 then
+						pcall(writefile, targetPath, bin);
+						if getcustomasset then
+							DiscordIcon.Image = getcustomasset(targetPath);
+						end;
+					end;
+				end;
+			end);
+		end;
+
+		task.spawn(updateCachedIcon, defaultIconUrl, iconFile);
+
+		local function formatCount(n)
+			if n >= 1000000 then
+				return string.format("%.1fM", n / 1000000);
+			elseif n >= 1000 then
+				return string.format("%.1fk", n / 1000);
+			end;
+			return tostring(n);
+		end;
+
+		local function fetchInfo()
+			local s, raw = pcall(function()
+				return game:HttpGet(inviteApi);
+			end);
+			if s and raw and #raw > 50 then
+				local jsonOk, data = pcall(function()
+					return HttpService:JSONDecode(raw);
+				end);
+				if jsonOk and data then
+					local memberCount = tonumber(data.approximate_member_count) or 198992;
+					local onlineCount = tonumber(data.approximate_presence_count) or 10535;
+					local guildName = (data.guild and data.guild.name) or "ThanHub";
+
+					DiscordName.Text = guildName;
+					DiscordStats.Text = "● " .. formatCount(onlineCount) .. " Online  •  " .. formatCount(memberCount) .. " Total";
+
+					if data.guild and data.guild.icon and data.guild.id then
+						local newIconUrl = "https://cdn.discordapp.com/icons/" .. data.guild.id .. "/" .. data.guild.icon .. ".png?size=128";
+						local customFile = assetFolder .. "/thanhub_" .. tostring(data.guild.icon) .. ".png";
+						updateCachedIcon(newIconUrl, customFile);
+					end;
+				end;
+			end;
+		end;
+
+		pcall(fetchInfo);
+
+		while task.wait(90) do
+			if not WindowFrame or not WindowFrame.Parent then break end;
+			pcall(fetchInfo);
+		end;
+	end);
 
 	RightMenuFrame.Name = NeverLose.RandomString();
 	RightMenuFrame.Parent = WindowFrame
