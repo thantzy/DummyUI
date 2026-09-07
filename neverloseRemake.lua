@@ -219,39 +219,70 @@ NeverLose.RegisiteryColor = {};
 NeverLose.NameRegisitry = {};
 NeverLose.IsMosueOverOtherFrame = false;
 NeverLose.GlobalLogo = "rbxassetid://120358385035996";
+NeverLose.ThanHubLogo = "rbxassetid://120358385035996";
+NeverLose.RonixLogo = "rbxassetid://120358385035996";
 NeverLose.ImageColorMapping = "rbxassetid://4155801252";
 
+local function downloadAssetFile(url, filePath)
+	if isfile and isfile(filePath) and getcustomasset then
+		return getcustomasset(filePath)
+	end
+	local s, data = pcall(game.HttpGet, game, url)
+	if s and data and #data > 200 then
+		pcall(writefile, filePath, data)
+		if getcustomasset then
+			return getcustomasset(filePath)
+		end
+	end
+	return nil
+end
+
 if getcustomasset then
-	local link = "https://github.com/4lpaca-pin/NeverLose/blob/main/assets/%s?raw=true";
 	local dir = 'NLAssets';
 
 	if not isfolder(dir) then
-		makefolder(dir);
+		pcall(makefolder, dir);
 	end;
 
-	pcall(function()
-		if not isfile(dir..'/'..'logo.png') then
-			local byte = game:HttpGet(string.format(link,'logo.png'));
-
-			writefile(dir..'/'..'logo.png' , byte);
-			task.wait();
-		end;
-
-		if isfile(dir..'/'..'logo.png') then
-			NeverLose.GlobalLogo = getcustomasset(dir..'/'..'logo.png')
+	-- 1. ThanHub Discord Logo (https://discord.com/api/v10/invites/thanhub)
+	task.spawn(function()
+		local thanhubUrl = "https://cdn.discordapp.com/icons/1339739723693948989/110a7c31f8a415e98e74305467f6be3b.png?size=256";
+		local asset = downloadAssetFile(thanhubUrl, dir .. '/thanhub_logo.png');
+		if asset then
+			NeverLose.ThanHubLogo = asset;
+			NeverLose.GlobalLogo = asset;
+			if NeverLose.ActiveWindow and NeverLose.ActiveWindow.LogoImage then
+				if NeverLose.ActiveWindow.LogoChoice == "ThanHub" or NeverLose.ActiveWindow.LogoChoice == "Default" then
+					NeverLose.ActiveWindow.LogoImage.Image = asset;
+				end;
+			end;
 		end;
 	end);
 
-	pcall(function()
-		if not isfile(dir..'/'..'saturation_value_gradient.png') then
-			local byte = game:HttpGet(string.format(link,'saturation_value_gradient.png'));
-
-			writefile(dir..'/'..'saturation_value_gradient.png' , byte);
-			task.wait();
+	-- 2. Ronix Studios Discord Logo (https://discord.com/api/v10/invites/ronixstudios)
+	task.spawn(function()
+		local ronixUrl = "https://cdn.discordapp.com/icons/1352066418744754318/faec4789f02f2d1280ddc654b2892259.png?size=256";
+		local asset = downloadAssetFile(ronixUrl, dir .. '/ronix_logo.png');
+		if asset then
+			NeverLose.RonixLogo = asset;
+			if NeverLose.ActiveWindow and NeverLose.ActiveWindow.LogoImage then
+				if NeverLose.ActiveWindow.LogoChoice == "Ronix" then
+					NeverLose.ActiveWindow.LogoImage.Image = asset;
+				end;
+			end;
 		end;
+	end);
 
-		if isfile(dir..'/'..'saturation_value_gradient.png') then
-			NeverLose.ImageColorMapping = getcustomasset(dir..'/'..'saturation_value_gradient.png')
+	-- 3. Default NeverLose logo & saturation map
+	task.spawn(function()
+		local link = "https://github.com/4lpaca-pin/NeverLose/blob/main/assets/%s?raw=true";
+		local assetLogo = downloadAssetFile(string.format(link, 'logo.png'), dir .. '/logo.png');
+		if assetLogo and not NeverLose.ThanHubLogo then
+			NeverLose.GlobalLogo = assetLogo;
+		end;
+		local assetGrad = downloadAssetFile(string.format(link, 'saturation_value_gradient.png'), dir .. '/saturation_value_gradient.png');
+		if assetGrad then
+			NeverLose.ImageColorMapping = assetGrad;
 		end;
 	end);
 end;
@@ -3973,8 +4004,22 @@ function NeverLose:RegisiterItem(Frame , Signel)
 end;
 
 function NeverLose:CreateWindow(Config)
+	local logoChoice = "Default"
+	if Config then
+		if Config.Logo == "ThanHub" or Config.Logo == "thanhub" or Config.Logo == NeverLose.ThanHubLogo then
+			Config.Logo = NeverLose.ThanHubLogo
+			logoChoice = "ThanHub"
+		elseif Config.Logo == "Ronix" or Config.Logo == "ronix" or Config.Logo == "RonixStudios" or Config.Logo == NeverLose.RonixLogo then
+			Config.Logo = NeverLose.RonixLogo
+			logoChoice = "Ronix"
+		elseif not Config.Logo or Config.Logo == NeverLose.GlobalLogo then
+			Config.Logo = NeverLose.ThanHubLogo or NeverLose.GlobalLogo
+			logoChoice = "ThanHub"
+		end
+	end
+
 	Config = NeverLose:ProcessParams(Config , {
-		Logo = NeverLose.GlobalLogo,
+		Logo = NeverLose.ThanHubLogo or NeverLose.GlobalLogo,
 		Name = "Neverlose",
 		Content = "Counter-Strike 2",
 		Size = UDim2.new(0, 640, 0, 480),
@@ -3985,6 +4030,7 @@ function NeverLose:CreateWindow(Config)
 
 	local Window = {
 		Logo = Config.Logo,
+		LogoChoice = logoChoice,
 		Name = Config.Name,
 		Content = Config.Content,
 		Size = Config.Size,
@@ -3997,6 +4043,7 @@ function NeverLose:CreateWindow(Config)
 	};
 
 	NeverLose.GlobalLogo = Window.Logo;
+	NeverLose.ActiveWindow = Window;
 
 	local Logging = NeverLose:CreateLogger();
 	if not isfolder(Window.ConfigFolder) then
