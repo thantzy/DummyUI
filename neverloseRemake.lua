@@ -5763,7 +5763,7 @@ function NeverLose:CreateWindow(Config)
 		end;
 
 		function Window:SaveConfig(name, isSilent)
-			name = (name and name ~= "") and name:gsub("[^%w_%- ]", "") or (ConfigLib.SelectedConfig or "Default")
+			name = (name and name ~= "") and (name:gsub("[^%w_%- ]", "")) or (ConfigLib.SelectedConfig or "Default")
 			if not name or name == "" then name = "Default" end
 			if not isfolder(Window.ConfigFolder) then
 				pcall(makefolder, Window.ConfigFolder)
@@ -5785,7 +5785,7 @@ function NeverLose:CreateWindow(Config)
 		end;
 
 		function Window:LoadConfig(name, isSilent)
-			name = (name and name ~= "") and name:gsub("[^%w_%- ]", "") or (ConfigLib.SelectedConfig or "Default")
+			name = (name and name ~= "") and (name:gsub("[^%w_%- ]", "")) or (ConfigLib.SelectedConfig or "Default")
 			if not name or name == "" then name = "Default" end
 			local path = Window.ConfigFolder .. '/' .. name
 			if not (isfile and isfile(path)) then
@@ -5816,7 +5816,7 @@ function NeverLose:CreateWindow(Config)
 		end;
 
 		function Window:DeleteConfig(name)
-			name = (name and name ~= "") and name:gsub("[^%w_%- ]", "") or ConfigLib.SelectedConfig
+			name = (name and name ~= "") and (name:gsub("[^%w_%- ]", "")) or ConfigLib.SelectedConfig
 			if name == "Default" then
 				Logging.new("trash-can", "Cannot delete Default config!", 3)
 				return false
@@ -5838,7 +5838,8 @@ function NeverLose:CreateWindow(Config)
 				for _, v in ipairs(files) do
 					local n = v:match("([^/\\\\]+)$")
 					if n and n ~= "" then
-						table.insert(list, n:gsub("%.json$", ""))
+						local cleanName = (n:gsub("%.json$", ""))
+						table.insert(list, cleanName)
 					end
 				end
 			end
