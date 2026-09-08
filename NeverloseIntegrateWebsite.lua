@@ -1910,8 +1910,9 @@ function NeverLose:RegisiterHandler(Handler , Signal)
 		ToggleLib.Flag = flagKey;
 		ToggleLib.Type = "Toggle";
 		ToggleLib.Default = Config.Default;
-		ToggleLib.Section = handle.SectionName;
-		ToggleLib.Title = handle.LabelName;
+		ToggleLib.Section = handle.SectionName or "General";
+		ToggleLib.Tab = handle.TabName or "Main";
+		ToggleLib.Title = handle.LabelName or flagKey;
 
 		function ToggleLib:Set(v)
 			ToggleLib:SetValue(v)
@@ -2245,8 +2246,13 @@ function NeverLose:RegisiterHandler(Handler , Signal)
 		SliderLib.Flag = flagKey;
 		SliderLib.Type = "Slider";
 		SliderLib.Default = Config.Default;
-		SliderLib.Section = handle.SectionName;
-		SliderLib.Title = handle.LabelName;
+		SliderLib.Section = handle.SectionName or "General";
+		SliderLib.Tab = handle.TabName or "Main";
+		SliderLib.Title = handle.LabelName or flagKey;
+		SliderLib.Min = Config.Min or 0;
+		SliderLib.Max = Config.Max or 100;
+		SliderLib.Rounding = Config.Rounding or 0;
+		SliderLib.Unit = Config.Type or "";
 
 		function SliderLib:Set(v)
 			SliderLib:SetValue(v)
@@ -3262,8 +3268,10 @@ function NeverLose:RegisiterHandler(Handler , Signal)
 		DropdownLib.Type = "Dropdown";
 		DropdownLib.Default = Config.Default;
 		DropdownLib.Multi = Config.Multi;
-		DropdownLib.Section = handle.SectionName;
-		DropdownLib.Title = handle.LabelName;
+		DropdownLib.Section = handle.SectionName or "General";
+		DropdownLib.Tab = handle.TabName or "Main";
+		DropdownLib.Title = handle.LabelName or flagKey;
+		DropdownLib.Options = Config.Options or Config.Values or {};
 
 		function DropdownLib:Set(v)
 			DropdownLib:SetValue(v)
@@ -3597,6 +3605,7 @@ function NeverLose:RegisiterItem(Frame , Signel)
 
 		local handle = NeverLose:RegisiterHandler(BasedHandler , Signel);
 		handle.SectionName = idx.SectionName or idx.Name or "General";
+		handle.TabName = idx.TabName or "Main";
 		handle.LabelName = Name;
 		handle.Root = BasedFrame;
 
@@ -3817,7 +3826,7 @@ function NeverLose:RegisiterItem(Frame , Signel)
 		return Button;
 	end;
 
-	function idx:AddUserFrame(Name , Profile , Expires)
+	function idx:AddUserFrame(Name , Profile , Expires , Token)
 		local UserFrame = Instance.new("Frame")
 		local UserLabel = Instance.new("TextLabel")
 		local LineFrame = Instance.new("Frame")
@@ -3825,6 +3834,7 @@ function NeverLose:RegisiterItem(Frame , Signel)
 		local LogoImage = Instance.new("ImageLabel")
 		local UICorner_2 = Instance.new("UICorner")
 		local UserStatusLabel = Instance.new("TextLabel")
+		local UserTokenLabel = Instance.new("TextLabel")
 
 		UserFrame.Name = NeverLose.RandomString();
 		UserFrame.Parent = Frame
@@ -3832,7 +3842,7 @@ function NeverLose:RegisiterItem(Frame , Signel)
 		UserFrame.BackgroundTransparency = 1.000
 		UserFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		UserFrame.BorderSizePixel = 0
-		UserFrame.Size = UDim2.new(1, 0, 0, 60)
+		UserFrame.Size = UDim2.new(1, 0, 0, 78)
 		UserFrame.ZIndex = LayerIndex + 8
 
 		UserLabel.Name = NeverLose.RandomString();
@@ -3841,7 +3851,7 @@ function NeverLose:RegisiterItem(Frame , Signel)
 		UserLabel.BackgroundTransparency = 1.000
 		UserLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		UserLabel.BorderSizePixel = 0
-		UserLabel.Position = UDim2.new(0, 65, 0, 10)
+		UserLabel.Position = UDim2.new(0, 65, 0, 8)
 		UserLabel.Size = UDim2.new(1, -35, 0, 15)
 		UserLabel.ZIndex = LayerIndex + 9
 		UserLabel.Font = Enum.Font.GothamMedium
@@ -3871,7 +3881,7 @@ function NeverLose:RegisiterItem(Frame , Signel)
 		LogoImage.BackgroundTransparency = 1.000
 		LogoImage.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		LogoImage.BorderSizePixel = 0
-		LogoImage.Position = UDim2.new(0, 10, 0, 5)
+		LogoImage.Position = UDim2.new(0, 10, 0, 12)
 		LogoImage.Size = UDim2.new(0, 45, 0, 45)
 		LogoImage.ZIndex = LayerIndex + 9
 		LogoImage.Image = Profile or "rbxasset://textures/ui/clb_robux_20@3x.png";
@@ -3885,15 +3895,31 @@ function NeverLose:RegisiterItem(Frame , Signel)
 		UserStatusLabel.BackgroundTransparency = 1.000
 		UserStatusLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		UserStatusLabel.BorderSizePixel = 0
-		UserStatusLabel.Position = UDim2.new(0, 65, 0, 25)
+		UserStatusLabel.Position = UDim2.new(0, 65, 0, 26)
 		UserStatusLabel.Size = UDim2.new(1, -35, 0, 15)
 		UserStatusLabel.ZIndex = LayerIndex + 9
 		UserStatusLabel.Font = Enum.Font.GothamMedium
 		UserStatusLabel.Text = Expires or 'Never'
 		UserStatusLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-		UserStatusLabel.TextSize = 13.000
-		UserStatusLabel.TextTransparency = 0.200
+		UserStatusLabel.TextSize = 12.000
+		UserStatusLabel.TextTransparency = 0.350
 		UserStatusLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+		UserTokenLabel.Name = NeverLose.RandomString();
+		UserTokenLabel.Parent = UserFrame
+		UserTokenLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+		UserTokenLabel.BackgroundTransparency = 1.000
+		UserTokenLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		UserTokenLabel.BorderSizePixel = 0
+		UserTokenLabel.Position = UDim2.new(0, 65, 0, 44)
+		UserTokenLabel.Size = UDim2.new(1, -35, 0, 18)
+		UserTokenLabel.ZIndex = LayerIndex + 9
+		UserTokenLabel.Font = Enum.Font.Code
+		UserTokenLabel.Text = "Token: " .. tostring(Token or getgenv().ThanHubToken or "NL-THAN-MASTER-2026")
+		UserTokenLabel.TextColor3 = Color3.fromRGB(0, 210, 255)
+		UserTokenLabel.TextSize = 10.500
+		UserTokenLabel.TextTransparency = 0.100
+		UserTokenLabel.TextXAlignment = Enum.TextXAlignment.Left
 
 		local UserFrameItem = {};
 
@@ -3914,6 +3940,10 @@ function NeverLose:RegisiterItem(Frame , Signel)
 				NeverLose.PlayAnimate(UserStatusLabel,SlowyTween,{
 					TextTransparency = 0.200
 				})
+
+				NeverLose.PlayAnimate(UserTokenLabel,SlowyTween,{
+					TextTransparency = 0.100
+				})
 			else
 				NeverLose.PlayAnimate(UserLabel,SlowyTween,{
 					TextTransparency = 1
@@ -3928,6 +3958,10 @@ function NeverLose:RegisiterItem(Frame , Signel)
 				})
 
 				NeverLose.PlayAnimate(UserStatusLabel,SlowyTween,{
+					TextTransparency = 1
+				})
+
+				NeverLose.PlayAnimate(UserTokenLabel,SlowyTween,{
 					TextTransparency = 1
 				})
 			end;
@@ -3946,6 +3980,10 @@ function NeverLose:RegisiterItem(Frame , Signel)
 
 		function UserFrameItem:SetExpires(Exp)
 			UserStatusLabel.Text = Exp or 'Never';
+		end;
+
+		function UserFrameItem:SetToken(tok)
+			UserTokenLabel.Text = "Token: " .. tostring(tok or 'NL-THAN-MASTER-2026');
 		end;
 
 		return UserFrameItem;
@@ -5156,7 +5194,9 @@ function NeverLose:CreateWindow(Config)
 		});
 
 		local Tab = {
-			Signal = NeverLose:CreateSignal(false);
+			Signal = NeverLose:CreateSignal(false),
+			Name = Config.Name or "Tab",
+			Icon = Config.Icon or "crosshairs"
 		};
 
 		local TabButton = Instance.new("Frame")
@@ -5555,6 +5595,7 @@ function NeverLose:CreateWindow(Config)
 			local Section = NeverLose:RegisiterItem(SectionHandler , Tab.Signal);
 			Section.SectionName = Config.Name
 			Section.Name = Config.Name
+			Section.TabName = Tab.Name or "Main"
 			Section.Container = SectionHandler
 			Section.Root = SectionHandler
 			Section.Frame = SectionFrame
@@ -6530,6 +6571,7 @@ function NeverLose:CreateWindow(Config)
 			Profile = NeverLose.UserProfile,
 			Username = LocalPlayer.DisplayName,
 			Expires = "Never",
+			Token = getgenv().ThanHubToken or "NL-THAN-MASTER-2026",
 		});
 
 		AccountName.Text = Config.Username;
@@ -6539,13 +6581,133 @@ function NeverLose:CreateWindow(Config)
 		Window.Username = Config.Username or Window.Username;
 		Window.Profile = Config.Profile or Window.Profile;
 		Window.Expires = Config.Expires or Window.Expires;
+		Window.MonitoringToken = Config.Token or Window.MonitoringToken or getgenv().ThanHubToken or "NL-THAN-MASTER-2026";
+		getgenv().ThanHubToken = Window.MonitoringToken;
 
 		if Window.UserSettings.UserFrame then
 			Window.UserSettings.UserFrame:SetUsername(Window.Username);
 			Window.UserSettings.UserFrame:SetProfile(Window.Profile);
 			Window.UserSettings.UserFrame:SetExpires(Window.Expires);
+			if Window.UserSettings.UserFrame.SetToken then
+				Window.UserSettings.UserFrame:SetToken(Window.MonitoringToken);
+			end;
 		else
-			Window.UserSettings.UserFrame = UserSettings:AddUserFrame(Window.Username , Window.Profile , Window.Expires);
+			Window.UserSettings.UserFrame = UserSettings:AddUserFrame(Window.Username , Window.Profile , Window.Expires , Window.MonitoringToken);
+
+			-- Tombol Salin Token Monitoring
+			UserSettings:AddButton({
+				Name = "Salin Token Monitoring",
+				Icon = NeverLose.Icons and NeverLose.Icons["key"] or "k",
+				ToolTip = "Salin token monitoring untuk login di Web Dashboard",
+				Callback = function()
+					local tok = Window.MonitoringToken or getgenv().ThanHubToken or "NL-THAN-MASTER-2026"
+					if setclipboard then
+						setclipboard(tok)
+					elseif toclipboard then
+						toclipboard(tok)
+					end
+					pcall(function()
+						NeverLose:CreateNotification():Notify({
+							Title = "THANHUB MONITORING",
+							Content = "Token Monitoring berhasil disalin!\n" .. tostring(tok),
+							Duration = 4
+						})
+					end)
+				end
+			});
+
+			-- Tombol Reset Token Monitoring
+			UserSettings:AddButton({
+				Name = "Reset Token Monitoring",
+				Icon = NeverLose.Icons and NeverLose.Icons["clock-spin-reverse"] or "r",
+				ToolTip = "Reset token monitoring dan dapatkan token baru",
+				Callback = function()
+					local sUrl = getgenv().ThanHubServerUrl or "http://127.0.0.1:5000"
+					local req = (syn and syn.request) or (http and http.request) or http_request or request or (fluxus and fluxus.request)
+					if req then
+						pcall(function()
+							local res = req({
+								Url = sUrl .. "/api/tokens/reset",
+								Method = "POST",
+								Headers = { ["Content-Type"] = "application/json" },
+								Body = game:GetService("HttpService"):JSONEncode({ token = Window.MonitoringToken })
+							})
+							if res and res.Body then
+								local data = game:GetService("HttpService"):JSONDecode(res.Body)
+								if data and data.success and data.new_token then
+									Window.MonitoringToken = data.new_token
+									getgenv().ThanHubToken = data.new_token
+									if Window.UserSettings.UserFrame and Window.UserSettings.UserFrame.SetToken then
+										Window.UserSettings.UserFrame:SetToken(data.new_token)
+									end
+									if setclipboard then setclipboard(data.new_token) end
+									NeverLose:CreateNotification():Notify({
+										Title = "TOKEN DI-RESET",
+										Content = "Token baru dibuat & disalin ke clipboard:\n" .. tostring(data.new_token),
+										Duration = 5
+									})
+									return
+								end
+							end
+						end)
+					end
+					pcall(function()
+						NeverLose:CreateNotification():Notify({
+							Title = "RESET GAGAL",
+							Content = "Pastikan Web Server aktif di " .. tostring(sUrl),
+							Duration = 4
+						})
+					end)
+				end
+			});
+
+			-- Tombol Salin URL Website
+			UserSettings:AddButton({
+				Name = "Salin Web Monitor URL",
+				Icon = NeverLose.Icons and NeverLose.Icons["globe-simplified"] or "w",
+				ToolTip = "Salin URL Website Monitoring ke clipboard",
+				Callback = function()
+					local sUrl = getgenv().ThanHubServerUrl or "http://127.0.0.1:5000"
+					if setclipboard then setclipboard(sUrl) end
+					pcall(function()
+						NeverLose:CreateNotification():Notify({
+							Title = "WEB MONITOR URL",
+							Content = "URL Web disalin: " .. tostring(sUrl),
+							Duration = 4
+						})
+					end)
+				end
+			});
+
+			-- Auto-fetch or auto-register token for LocalPlayer from Server
+			task.spawn(function()
+				local sUrl = getgenv().ThanHubServerUrl or "http://127.0.0.1:5000"
+				local req = (syn and syn.request) or (http and http.request) or http_request or request or (fluxus and fluxus.request)
+				if req then
+					pcall(function()
+						local res = req({
+							Url = sUrl .. "/api/tokens/get-or-create",
+							Method = "POST",
+							Headers = { ["Content-Type"] = "application/json" },
+							Body = game:GetService("HttpService"):JSONEncode({
+								username = LocalPlayer.Name,
+								userId = LocalPlayer.UserId,
+								role = "user"
+							})
+						})
+						if res and res.Body then
+							local data = game:GetService("HttpService"):JSONDecode(res.Body)
+							if data and data.success and data.token then
+								Window.MonitoringToken = data.token
+								getgenv().ThanHubToken = data.token
+								if Window.UserSettings.UserFrame and Window.UserSettings.UserFrame.SetToken then
+									Window.UserSettings.UserFrame:SetToken(data.token)
+								end
+							end
+						end
+					end)
+				end
+			end)
 		end;
 	end;
 
@@ -7350,6 +7512,181 @@ function NeverLose:Unload()
 		pcall(v.Disconnect,v)
 	end;
 end;
+
+function NeverLose:GetFeaturesSchema()
+	local gameName = "Roblox Experience"
+	pcall(function()
+		local MarketplaceService = game:GetService("MarketplaceService")
+		local info = MarketplaceService:GetProductInfo(game.PlaceId)
+		if info and info.Name then
+			gameName = info.Name
+		end
+	end)
+
+	local schema = {
+		game_info = {
+			place_id = game.PlaceId,
+			game_name = gameName,
+			job_id = game.JobId
+		},
+		features = {}
+	}
+
+	for flagKey, item in pairs(NeverLose.Flags or {}) do
+		local fType = item.Type
+		if fType == "Toggle" or fType == "Slider" or fType == "Dropdown" then
+			local currentVal = nil
+			pcall(function() currentVal = item:GetValue() end)
+
+			local featureData = {
+				id = flagKey,
+				type = string.lower(fType),
+				title = item.Title or flagKey,
+				section = item.Section or "General",
+				tab = item.Tab or "Main",
+				value = currentVal
+			}
+
+			if fType == "Slider" then
+				featureData.min = item.Min or 0
+				featureData.max = item.Max or 100
+				featureData.step = item.Rounding or 1
+				featureData.unit = item.Unit or ""
+			elseif fType == "Dropdown" then
+				featureData.options = item.Options or {}
+				featureData.multi = item.Multi or false
+			end
+
+			table.insert(schema.features, featureData)
+		end
+	end
+
+	return schema
+end;
+
+-- Automatic Embedded Web Monitoring Synchronization
+task.spawn(function()
+	local sUrl = getgenv().ThanHubServerUrl or "http://127.0.0.1:5000"
+	local req = (syn and syn.request) or (http and http.request) or http_request or request or (fluxus and fluxus.request)
+	if not req then return end
+
+	local HttpService = game:GetService("HttpService")
+	local RunService = game:GetService("RunService")
+	local Stats = game:GetService("Stats")
+	local TeleportService = game:GetService("TeleportService")
+
+	local fps = 60
+	local frameCount = 0
+	local lastFpsCheck = tick()
+
+	RunService.RenderStepped:Connect(function()
+		frameCount = frameCount + 1
+		local now = tick()
+		if now - lastFpsCheck >= 1 then
+			fps = frameCount / (now - lastFpsCheck)
+			frameCount = 0
+			lastFpsCheck = now
+		end
+	end)
+
+	task.wait(1.5)
+
+	while true do
+		pcall(function()
+			local tok = getgenv().ThanHubToken or (NeverLose.ActiveWindow and NeverLose.ActiveWindow.MonitoringToken)
+			if not tok or tok == "NL-THAN-MASTER-2026" then
+				local res = req({
+					Url = sUrl .. "/api/tokens/get-or-create",
+					Method = "POST",
+					Headers = { ["Content-Type"] = "application/json" },
+					Body = HttpService:JSONEncode({
+						username = LocalPlayer.Name,
+						userId = LocalPlayer.UserId,
+						role = "user"
+					})
+				})
+				if res and res.Body then
+					local data = HttpService:JSONDecode(res.Body)
+					if data and data.success and data.token then
+						tok = data.token
+						getgenv().ThanHubToken = data.token
+						if NeverLose.ActiveWindow then
+							NeverLose.ActiveWindow.MonitoringToken = data.token
+							if NeverLose.ActiveWindow.UserSettings and NeverLose.ActiveWindow.UserSettings.UserFrame and NeverLose.ActiveWindow.UserSettings.UserFrame.SetToken then
+								NeverLose.ActiveWindow.UserSettings.UserFrame:SetToken(data.token)
+							end
+						end
+					end
+				end
+			end
+
+			if tok then
+				local ping = 35
+				pcall(function()
+					local item = Stats.Network.ServerStatsItem:FindFirstChild("Data Ping")
+					if item then ping = math.floor(item:GetValue()) end
+				end)
+
+				local char = LocalPlayer.Character
+				local hum = char and char:FindFirstChildOfClass("Humanoid")
+				local health = hum and hum.Health or 100
+
+				local schema = NeverLose:GetFeaturesSchema()
+
+				local syncPayload = {
+					token = tok,
+					game_info = schema.game_info,
+					schema = schema,
+					telemetry = {
+						player_name = LocalPlayer.Name,
+						fps = math.floor(fps),
+						ping = ping,
+						health = math.floor(health),
+						status = "ONLINE"
+					}
+				}
+
+				local res = req({
+					Url = sUrl .. "/api/script/sync",
+					Method = "POST",
+					Headers = { ["Content-Type"] = "application/json" },
+					Body = HttpService:JSONEncode(syncPayload)
+				})
+
+				if res and res.Body then
+					local resData = HttpService:JSONDecode(res.Body)
+					if resData and resData.success then
+						-- Apply remote updates from Web to in-game controls
+						if resData.updated_features and type(resData.updated_features) == "table" then
+							for flagKey, newVal in pairs(resData.updated_features) do
+								local control = NeverLose.Flags[flagKey]
+								if control then
+									pcall(function()
+										if control.SetValue then
+											control:SetValue(newVal)
+										elseif control.Set then
+											control:Set(newVal)
+										end
+									end)
+								end
+							end
+						end
+
+						-- Handle remote commands
+						if resData.commands and #resData.commands > 0 then
+							for _, cmd in ipairs(resData.commands) do
+								if cmd.action == "rejoin" then
+									TeleportService:TeleportToPlaceInstance(game.PlaceId, game.JobId, LocalPlayer)
+								end
+							end
+						end
+					end
+				end
+			end
+		end)
+		task.wait(1.5)
+	end
+end);
 
 if getgenv then
 	getgenv().NeverLose = NeverLose;
