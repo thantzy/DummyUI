@@ -223,6 +223,61 @@ NeverLose.ThanHubLogo = "rbxassetid://120358385035996";
 NeverLose.RonixLogo = "rbxassetid://120358385035996";
 NeverLose.ImageColorMapping = "rbxassetid://4155801252";
 
+-- Template identifiers for easy config usage: Template = Ronix or Template = ThanHub
+local Ronix = "Ronix";
+local ThanHub = "ThanHub";
+local RonixStudios = "Ronix";
+if getgenv then
+	getgenv().Ronix = "Ronix";
+	getgenv().ThanHub = "ThanHub";
+	getgenv().RonixStudios = "Ronix";
+end;
+_G.Ronix = "Ronix";
+_G.ThanHub = "ThanHub";
+_G.RonixStudios = "Ronix";
+if shared then
+	shared.Ronix = "Ronix";
+	shared.ThanHub = "ThanHub";
+	shared.RonixStudios = "Ronix";
+end;
+
+NeverLose.Templates = {
+	Ronix = {
+		Name = "Ronix Studios",
+		LogoChoice = "Ronix",
+		GetLogo = function() return NeverLose.RonixLogo end,
+		ConfigFolder = "RonixConfigs",
+		DiscordName = "Ronix Studios",
+		DiscordLink = "discord.gg/ronixstudios",
+		DiscordInvite = "https://discord.gg/ronixstudios",
+		DiscordApi = "https://discord.com/api/v10/invites/ronixstudios?with_counts=true",
+		DefaultStats = "● 5.2k Online  •  880k Total",
+		IconUrl = "https://cdn.discordapp.com/icons/1352066418744754318/faec4789f02f2d1280ddc654b2892259.png?size=128",
+		AssetFolder = "Ronix_Assets",
+		IconFileName = "ronix_icon.png",
+		Watermark = "Ronix",
+		DefaultOnline = 50200,
+		DefaultTotal = 880000
+	},
+	ThanHub = {
+		Name = "ThanHub",
+		LogoChoice = "ThanHub",
+		GetLogo = function() return NeverLose.ThanHubLogo or NeverLose.GlobalLogo end,
+		ConfigFolder = "ThanHubConfigs",
+		DiscordName = "ThanHub",
+		DiscordLink = "discord.gg/thanhub",
+		DiscordInvite = "https://discord.gg/thanhub",
+		DiscordApi = "https://discord.com/api/v10/invites/thanhub?with_counts=true",
+		DefaultStats = "● 10.5k Online  •  198k Total",
+		IconUrl = "https://cdn.discordapp.com/icons/1339739723693948989/110a7c31f8a415e98e74305467f6be3b.png?size=128",
+		AssetFolder = "ThanHub_Assets",
+		IconFileName = "thanhub_icon.png",
+		Watermark = "ThanHub",
+		DefaultOnline = 10535,
+		DefaultTotal = 198992
+	}
+};
+
 local function downloadAssetFile(url, filePath)
 	if isfile and isfile(filePath) and getcustomasset then
 		return getcustomasset(filePath)
@@ -3930,8 +3985,8 @@ function NeverLose:RegisiterItem(Frame , Signel)
 				NeverLose.PlayAnimate(UserStatusLabel,SlowyTween,{
 					TextTransparency = 1
 				})
-			end;
-		end);
+		end;
+	end);
 
 		UserFrameItem.SetRender(Signel:GetValue())
 		Signel:Connect(UserFrameItem.SetRender);
@@ -4004,31 +4059,63 @@ function NeverLose:RegisiterItem(Frame , Signel)
 end;
 
 function NeverLose:CreateWindow(Config)
-	local logoChoice = "Default"
-	if Config then
+	Config = Config or {};
+
+	-- 1. Resolve Template (Ronix / ThanHub)
+	local templateKey = "ThanHub";
+	if Config.Template then
+		local t = string.lower(tostring(Config.Template));
+		if string.find(t, "ronix") then
+			templateKey = "Ronix";
+		elseif string.find(t, "than") then
+			templateKey = "ThanHub";
+		end;
+	elseif Config.Logo == "Ronix" or Config.Logo == "ronix" or Config.Logo == "RonixStudios" or Config.Logo == NeverLose.RonixLogo then
+		templateKey = "Ronix";
+	end;
+
+	local template = NeverLose.Templates[templateKey] or NeverLose.Templates.ThanHub;
+
+	-- 2. Determine Logo
+	local logoChoice = template.LogoChoice;
+	if Config.Logo then
 		if Config.Logo == "ThanHub" or Config.Logo == "thanhub" or Config.Logo == NeverLose.ThanHubLogo then
-			Config.Logo = NeverLose.ThanHubLogo
-			logoChoice = "ThanHub"
+			Config.Logo = NeverLose.ThanHubLogo;
+			logoChoice = "ThanHub";
 		elseif Config.Logo == "Ronix" or Config.Logo == "ronix" or Config.Logo == "RonixStudios" or Config.Logo == NeverLose.RonixLogo then
-			Config.Logo = NeverLose.RonixLogo
-			logoChoice = "Ronix"
-		elseif not Config.Logo or Config.Logo == NeverLose.GlobalLogo then
-			Config.Logo = NeverLose.ThanHubLogo or NeverLose.GlobalLogo
-			logoChoice = "ThanHub"
-		end
-	end
+			Config.Logo = NeverLose.RonixLogo;
+			logoChoice = "Ronix";
+		elseif Config.Logo == "" or Config.Logo == NeverLose.GlobalLogo then
+			Config.Logo = template.GetLogo();
+		end;
+	else
+		Config.Logo = template.GetLogo();
+	end;
+
+	-- 3. Default ConfigFolder if not explicitly set
+	if not Config.ConfigFolder or Config.ConfigFolder == "NeverLoseConfigs" then
+		Config.ConfigFolder = template.ConfigFolder;
+	end;
+
+	-- 4. Default Name if not explicitly set
+	local defaultName = template.Name;
+	if not Config.Name or Config.Name == "Neverlose" then
+		Config.Name = defaultName;
+	end;
 
 	Config = NeverLose:ProcessParams(Config , {
-		Logo = NeverLose.ThanHubLogo or NeverLose.GlobalLogo,
-		Name = "Neverlose",
-		Content = "Counter-Strike 2",
+		Logo = Config.Logo or template.GetLogo(),
+		Name = Config.Name or defaultName,
+		Content = (templateKey == "Ronix" and "Ronix Studios") or "Counter-Strike 2",
 		Size = UDim2.new(0, 640, 0, 480),
-		ConfigFolder = "NeverLoseConfigs",
+		ConfigFolder = Config.ConfigFolder or template.ConfigFolder,
 		Enable3DRenderer = false,
 		Keybind = "Insert"
 	});
 
 	local Window = {
+		Template = templateKey,
+		TemplateData = template,
 		Logo = Config.Logo,
 		LogoChoice = logoChoice,
 		Name = Config.Name,
@@ -4426,6 +4513,7 @@ function NeverLose:CreateWindow(Config)
 	LogoImage.ZIndex = 7
 	LogoImage.Image = Window.Logo
 	LogoImage.ImageColor3 = NeverLose.IconColor
+	Window.LogoImage = LogoImage;
 
 	UICorner_2.CornerRadius = UDim.new(0, 7)
 	UICorner_2.Parent = LogoImage
@@ -4632,7 +4720,7 @@ function NeverLose:CreateWindow(Config)
 	DiscordName.Size = UDim2.new(1, -50, 0, 14);
 	DiscordName.ZIndex = 9;
 	DiscordName.Font = Enum.Font.GothamBold;
-	DiscordName.Text = "ThanHub";
+	DiscordName.Text = template.DiscordName;
 	DiscordName.TextColor3 = Color3.fromRGB(255, 255, 255);
 	DiscordName.TextSize = 11.000;
 	DiscordName.TextXAlignment = Enum.TextXAlignment.Left;
@@ -4646,7 +4734,7 @@ function NeverLose:CreateWindow(Config)
 	DiscordStats.Size = UDim2.new(1, -50, 0, 14);
 	DiscordStats.ZIndex = 9;
 	DiscordStats.Font = Enum.Font.GothamMedium;
-	DiscordStats.Text = "● 10.5k Online  •  198k Total";
+	DiscordStats.Text = template.DefaultStats;
 	DiscordStats.TextColor3 = Color3.fromRGB(160, 168, 185);
 	DiscordStats.TextSize = 8.500;
 	DiscordStats.TextXAlignment = Enum.TextXAlignment.Left;
@@ -4660,7 +4748,7 @@ function NeverLose:CreateWindow(Config)
 	DiscordLink.Size = UDim2.new(1, -50, 0, 12);
 	DiscordLink.ZIndex = 9;
 	DiscordLink.Font = Enum.Font.GothamMedium;
-	DiscordLink.Text = "discord.gg/thanhub";
+	DiscordLink.Text = template.DiscordLink;
 	DiscordLink.TextColor3 = Color3.fromRGB(88, 101, 242);
 	DiscordLink.TextSize = 8.500;
 	DiscordLink.TextXAlignment = Enum.TextXAlignment.Left;
@@ -4700,7 +4788,7 @@ function NeverLose:CreateWindow(Config)
 	end)))
 
 	NeverLose:AddSignal(DiscordButton.MouseButton1Click:Connect(LPH_NO_VIRTUALIZE(function()
-		local invite = "https://discord.gg/thanhub";
+		local invite = template.DiscordInvite;
 		local copied = false;
 		pcall(function()
 			local sc = setclipboard or set_clipboard or toclipboard or (syn and syn.write_clipboard);
@@ -4709,14 +4797,14 @@ function NeverLose:CreateWindow(Config)
 				copied = true;
 			end;
 		end);
-		Logging.new("message-circle", copied and "Discord invite copied! (discord.gg/thanhub)" or "Join at discord.gg/thanhub", 3.5);
+		Logging.new("message-circle", copied and ("Discord invite copied! (" .. template.DiscordLink .. ")") or ("Join at " .. template.DiscordLink), 3.5);
 	end)))
 
 	task.spawn(function()
-		local inviteApi = "https://discord.com/api/v10/invites/thanhub?with_counts=true";
-		local assetFolder = "ThanHub_Assets";
-		local iconFile = assetFolder .. "/thanhub_icon.png";
-		local defaultIconUrl = "https://cdn.discordapp.com/icons/1339739723693948989/110a7c31f8a415e98e74305467f6be3b.png?size=128";
+		local inviteApi = template.DiscordApi;
+		local assetFolder = template.AssetFolder;
+		local iconFile = assetFolder .. "/" .. template.IconFileName;
+		local defaultIconUrl = template.IconUrl;
 
 		local function updateCachedIcon(targetUrl, targetPath)
 			pcall(function()
@@ -4755,16 +4843,16 @@ function NeverLose:CreateWindow(Config)
 					return HttpService:JSONDecode(raw);
 				end);
 				if jsonOk and data then
-					local memberCount = tonumber(data.approximate_member_count) or 198992;
-					local onlineCount = tonumber(data.approximate_presence_count) or 10535;
-					local guildName = (data.guild and data.guild.name) or "ThanHub";
+					local memberCount = tonumber(data.approximate_member_count) or template.DefaultTotal;
+					local onlineCount = tonumber(data.approximate_presence_count) or template.DefaultOnline;
+					local guildName = (data.guild and data.guild.name) or template.DiscordName;
 
 					DiscordName.Text = guildName;
 					DiscordStats.Text = "● " .. formatCount(onlineCount) .. " Online  •  " .. formatCount(memberCount) .. " Total";
 
 					if data.guild and data.guild.icon and data.guild.id then
 						local newIconUrl = "https://cdn.discordapp.com/icons/" .. data.guild.id .. "/" .. data.guild.icon .. ".png?size=128";
-						local customFile = assetFolder .. "/thanhub_" .. tostring(data.guild.icon) .. ".png";
+						local customFile = assetFolder .. "/" .. templateKey:lower() .. "_" .. tostring(data.guild.icon) .. ".png";
 						updateCachedIcon(newIconUrl, customFile);
 					end;
 				end;
@@ -7354,12 +7442,21 @@ end;
 if getgenv then
 	getgenv().NeverLose = NeverLose;
 	getgenv().Neverlose = NeverLose;
+	getgenv().Ronix = "Ronix";
+	getgenv().ThanHub = "ThanHub";
+	getgenv().RonixStudios = "Ronix";
 end;
 _G.NeverLose = NeverLose;
 _G.Neverlose = NeverLose;
+_G.Ronix = "Ronix";
+_G.ThanHub = "ThanHub";
+_G.RonixStudios = "Ronix";
 if shared then
 	shared.NeverLose = NeverLose;
 	shared.Neverlose = NeverLose;
+	shared.Ronix = "Ronix";
+	shared.ThanHub = "ThanHub";
+	shared.RonixStudios = "Ronix";
 end;
 
 return NeverLose;
