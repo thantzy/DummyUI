@@ -221,24 +221,34 @@ NeverLose.IsMosueOverOtherFrame = false;
 NeverLose.GlobalLogo = "rbxassetid://120358385035996";
 NeverLose.ThanHubLogo = "rbxassetid://120358385035996";
 NeverLose.RonixLogo = "rbxassetid://120358385035996";
+NeverLose.H4xLogo = "rbxassetid://120358385035996";
+NeverLose.H4xScriptsLogo = "rbxassetid://120358385035996";
 NeverLose.ImageColorMapping = "rbxassetid://4155801252";
 
--- Template identifiers for easy config usage: Template = Ronix or Template = ThanHub
+-- Template identifiers for easy config usage: Template = Ronix, Template = ThanHub, Template = H4xScripts
 local Ronix = "Ronix";
 local ThanHub = "ThanHub";
 local RonixStudios = "Ronix";
+local H4xScripts = "H4xScripts";
+local H4x = "H4xScripts";
 if getgenv then
 	getgenv().Ronix = "Ronix";
 	getgenv().ThanHub = "ThanHub";
 	getgenv().RonixStudios = "Ronix";
+	getgenv().H4xScripts = "H4xScripts";
+	getgenv().H4x = "H4xScripts";
 end;
 _G.Ronix = "Ronix";
 _G.ThanHub = "ThanHub";
 _G.RonixStudios = "Ronix";
+_G.H4xScripts = "H4xScripts";
+_G.H4x = "H4xScripts";
 if shared then
 	shared.Ronix = "Ronix";
 	shared.ThanHub = "ThanHub";
 	shared.RonixStudios = "Ronix";
+	shared.H4xScripts = "H4xScripts";
+	shared.H4x = "H4xScripts";
 end;
 
 NeverLose.Templates = {
@@ -275,8 +285,26 @@ NeverLose.Templates = {
 		Watermark = "ThanHub",
 		DefaultOnline = 10535,
 		DefaultTotal = 198992
+	},
+	H4xScripts = {
+		Name = "H4xScripts",
+		LogoChoice = "H4xScripts",
+		GetLogo = function() return NeverLose.H4xScriptsLogo or NeverLose.H4xLogo or NeverLose.GlobalLogo end,
+		ConfigFolder = "H4xScriptsConfigs",
+		DiscordName = "H4xScripts",
+		DiscordLink = "discord.gg/h4xscripts",
+		DiscordInvite = "https://discord.com/invite/h4xscripts",
+		DiscordApi = "https://discord.com/api/v10/invites/h4xscripts?with_counts=true",
+		DefaultStats = "● 4.2k Online  •  256k Total",
+		IconUrl = "https://cdn.discordapp.com/icons/1340303753756020748/3c5684c5ca3f2c64d7b50282d755f5d5.png?size=128",
+		AssetFolder = "H4xAssets",
+		IconFileName = "h4x_icon.png",
+		Watermark = "H4xScripts",
+		DefaultOnline = 4255,
+		DefaultTotal = 256172
 	}
 };
+NeverLose.Templates.H4x = NeverLose.Templates.H4xScripts;
 
 local function downloadAssetFile(url, filePath)
 	if isfile and isfile(filePath) and getcustomasset then
@@ -328,7 +356,22 @@ if getcustomasset then
 		end;
 	end);
 
-	-- 3. Default NeverLose logo & saturation map
+	-- 3. H4xScripts Discord Logo (https://discord.com/invite/h4xscripts)
+	task.spawn(function()
+		local h4xUrl = "https://cdn.discordapp.com/icons/1340303753756020748/3c5684c5ca3f2c64d7b50282d755f5d5.png?size=256";
+		local asset = downloadAssetFile(h4xUrl, dir .. '/h4x_logo.png');
+		if asset then
+			NeverLose.H4xLogo = asset;
+			NeverLose.H4xScriptsLogo = asset;
+			if NeverLose.ActiveWindow and NeverLose.ActiveWindow.LogoImage then
+				if NeverLose.ActiveWindow.LogoChoice == "H4xScripts" or NeverLose.ActiveWindow.LogoChoice == "H4x" then
+					NeverLose.ActiveWindow.LogoImage.Image = asset;
+				end;
+			end;
+		end;
+	end);
+
+	-- 4. Default NeverLose logo & saturation map
 	task.spawn(function()
 		local link = "https://github.com/4lpaca-pin/NeverLose/blob/main/assets/%s?raw=true";
 		local assetLogo = downloadAssetFile(string.format(link, 'logo.png'), dir .. '/logo.png');
@@ -4061,17 +4104,21 @@ end;
 function NeverLose:CreateWindow(Config)
 	Config = Config or {};
 
-	-- 1. Resolve Template (Ronix / ThanHub)
+	-- 1. Resolve Template (Ronix / ThanHub / H4xScripts)
 	local templateKey = "ThanHub";
 	if Config.Template then
 		local t = string.lower(tostring(Config.Template));
 		if string.find(t, "ronix") then
 			templateKey = "Ronix";
+		elseif string.find(t, "h4x") then
+			templateKey = "H4xScripts";
 		elseif string.find(t, "than") then
 			templateKey = "ThanHub";
 		end;
 	elseif Config.Logo == "Ronix" or Config.Logo == "ronix" or Config.Logo == "RonixStudios" or Config.Logo == NeverLose.RonixLogo then
 		templateKey = "Ronix";
+	elseif Config.Logo == "H4x" or Config.Logo == "h4x" or Config.Logo == "H4xScripts" or Config.Logo == "h4xscripts" or Config.Logo == NeverLose.H4xLogo or Config.Logo == NeverLose.H4xScriptsLogo then
+		templateKey = "H4xScripts";
 	end;
 
 	local template = NeverLose.Templates[templateKey] or NeverLose.Templates.ThanHub;
@@ -4085,6 +4132,9 @@ function NeverLose:CreateWindow(Config)
 		elseif Config.Logo == "Ronix" or Config.Logo == "ronix" or Config.Logo == "RonixStudios" or Config.Logo == NeverLose.RonixLogo then
 			Config.Logo = NeverLose.RonixLogo;
 			logoChoice = "Ronix";
+		elseif Config.Logo == "H4x" or Config.Logo == "h4x" or Config.Logo == "H4xScripts" or Config.Logo == "h4xscripts" or Config.Logo == NeverLose.H4xLogo or Config.Logo == NeverLose.H4xScriptsLogo then
+			Config.Logo = NeverLose.H4xScriptsLogo or NeverLose.H4xLogo;
+			logoChoice = "H4xScripts";
 		elseif Config.Logo == "" or Config.Logo == NeverLose.GlobalLogo then
 			Config.Logo = template.GetLogo();
 		end;
@@ -4106,7 +4156,7 @@ function NeverLose:CreateWindow(Config)
 	Config = NeverLose:ProcessParams(Config , {
 		Logo = Config.Logo or template.GetLogo(),
 		Name = Config.Name or defaultName,
-		Content = (templateKey == "Ronix" and "Ronix Studios") or "Counter-Strike 2",
+		Content = (templateKey == "Ronix" and "Ronix Studios") or (templateKey == "H4xScripts" and "H4xScripts") or "Counter-Strike 2",
 		Size = UDim2.new(0, 640, 0, 480),
 		ConfigFolder = Config.ConfigFolder or template.ConfigFolder,
 		Enable3DRenderer = false,
@@ -7445,18 +7495,24 @@ if getgenv then
 	getgenv().Ronix = "Ronix";
 	getgenv().ThanHub = "ThanHub";
 	getgenv().RonixStudios = "Ronix";
+	getgenv().H4xScripts = "H4xScripts";
+	getgenv().H4x = "H4xScripts";
 end;
 _G.NeverLose = NeverLose;
 _G.Neverlose = NeverLose;
 _G.Ronix = "Ronix";
 _G.ThanHub = "ThanHub";
 _G.RonixStudios = "Ronix";
+_G.H4xScripts = "H4xScripts";
+_G.H4x = "H4xScripts";
 if shared then
 	shared.NeverLose = NeverLose;
 	shared.Neverlose = NeverLose;
 	shared.Ronix = "Ronix";
 	shared.ThanHub = "ThanHub";
 	shared.RonixStudios = "Ronix";
+	shared.H4xScripts = "H4xScripts";
+	shared.H4x = "H4xScripts";
 end;
 
 return NeverLose;
