@@ -337,6 +337,7 @@ if getcustomasset then
 			if NeverLose.ActiveWindow and NeverLose.ActiveWindow.LogoImage then
 				if NeverLose.ActiveWindow.LogoChoice == "ThanHub" or NeverLose.ActiveWindow.LogoChoice == "Default" then
 					NeverLose.ActiveWindow.LogoImage.Image = asset;
+					NeverLose.ActiveWindow.LogoImage.ImageColor3 = Color3.fromRGB(255, 255, 255);
 				end;
 			end;
 		end;
@@ -351,6 +352,7 @@ if getcustomasset then
 			if NeverLose.ActiveWindow and NeverLose.ActiveWindow.LogoImage then
 				if NeverLose.ActiveWindow.LogoChoice == "Ronix" then
 					NeverLose.ActiveWindow.LogoImage.Image = asset;
+					NeverLose.ActiveWindow.LogoImage.ImageColor3 = Color3.fromRGB(255, 255, 255);
 				end;
 			end;
 		end;
@@ -366,6 +368,7 @@ if getcustomasset then
 			if NeverLose.ActiveWindow and NeverLose.ActiveWindow.LogoImage then
 				if NeverLose.ActiveWindow.LogoChoice == "H4xScripts" or NeverLose.ActiveWindow.LogoChoice == "H4x" then
 					NeverLose.ActiveWindow.LogoImage.Image = asset;
+					NeverLose.ActiveWindow.LogoImage.ImageColor3 = Color3.fromRGB(255, 255, 255);
 				end;
 			end;
 		end;
@@ -4124,22 +4127,39 @@ function NeverLose:CreateWindow(Config)
 	local template = NeverLose.Templates[templateKey] or NeverLose.Templates.ThanHub;
 
 	-- 2. Determine Logo
+	local function getPrecachedLogo(tKey)
+		local t = NeverLose.Templates[tKey] or NeverLose.Templates.ThanHub;
+		if isfile and getcustomasset then
+			local dir = 'NLAssets';
+			local defaultPath = dir .. '/' .. (tKey == "Ronix" and "ronix_logo.png" or (tKey == "H4xScripts" and "h4x_logo.png" or "thanhub_logo.png"));
+			if isfile(defaultPath) then
+				return getcustomasset(defaultPath);
+			end;
+			local iconPath = t.AssetFolder .. "/" .. t.IconFileName;
+			if isfile(iconPath) then
+				return getcustomasset(iconPath);
+			end;
+		end;
+		return t.GetLogo();
+	end;
+
 	local logoChoice = template.LogoChoice;
+	local defaultTemplateLogo = getPrecachedLogo(templateKey);
 	if Config.Logo then
 		if Config.Logo == "ThanHub" or Config.Logo == "thanhub" or Config.Logo == NeverLose.ThanHubLogo then
-			Config.Logo = NeverLose.ThanHubLogo;
+			Config.Logo = getPrecachedLogo("ThanHub");
 			logoChoice = "ThanHub";
 		elseif Config.Logo == "Ronix" or Config.Logo == "ronix" or Config.Logo == "RonixStudios" or Config.Logo == NeverLose.RonixLogo then
-			Config.Logo = NeverLose.RonixLogo;
+			Config.Logo = getPrecachedLogo("Ronix");
 			logoChoice = "Ronix";
 		elseif Config.Logo == "H4x" or Config.Logo == "h4x" or Config.Logo == "H4xScripts" or Config.Logo == "h4xscripts" or Config.Logo == NeverLose.H4xLogo or Config.Logo == NeverLose.H4xScriptsLogo then
-			Config.Logo = NeverLose.H4xScriptsLogo or NeverLose.H4xLogo;
+			Config.Logo = getPrecachedLogo("H4xScripts");
 			logoChoice = "H4xScripts";
 		elseif Config.Logo == "" or Config.Logo == NeverLose.GlobalLogo then
-			Config.Logo = template.GetLogo();
+			Config.Logo = defaultTemplateLogo;
 		end;
 	else
-		Config.Logo = template.GetLogo();
+		Config.Logo = defaultTemplateLogo;
 	end;
 
 	-- 3. Default ConfigFolder if not explicitly set
@@ -4859,15 +4879,34 @@ function NeverLose:CreateWindow(Config)
 		local function updateCachedIcon(targetUrl, targetPath)
 			pcall(function()
 				if not isfolder(assetFolder) then pcall(makefolder, assetFolder) end;
+				local assetId = nil
 				if isfile and isfile(targetPath) and getcustomasset then
-					DiscordIcon.Image = getcustomasset(targetPath);
+					assetId = getcustomasset(targetPath);
 				else
 					local s, bin = pcall(game.HttpGet, game, targetUrl);
 					if s and bin and #bin > 500 then
 						pcall(writefile, targetPath, bin);
 						if getcustomasset then
-							DiscordIcon.Image = getcustomasset(targetPath);
+							assetId = getcustomasset(targetPath);
 						end;
+					end;
+				end;
+
+				if assetId then
+					DiscordIcon.Image = assetId;
+					if LogoImage then
+						LogoImage.Image = assetId;
+						LogoImage.ImageColor3 = Color3.fromRGB(255, 255, 255);
+					end;
+					Window.Logo = assetId;
+					if templateKey == "Ronix" then
+						NeverLose.RonixLogo = assetId;
+					elseif templateKey == "ThanHub" then
+						NeverLose.ThanHubLogo = assetId;
+						NeverLose.GlobalLogo = assetId;
+					elseif templateKey == "H4xScripts" then
+						NeverLose.H4xLogo = assetId;
+						NeverLose.H4xScriptsLogo = assetId;
 					end;
 				end;
 			end);
