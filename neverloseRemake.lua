@@ -223,6 +223,7 @@ NeverLose.ThanHubLogo = "rbxassetid://120358385035996";
 NeverLose.RonixLogo = "rbxassetid://120358385035996";
 NeverLose.H4xLogo = "rbxassetid://120358385035996";
 NeverLose.H4xScriptsLogo = "rbxassetid://120358385035996";
+NeverLose.LiyhubLogo = "rbxassetid://120358385035996";
 NeverLose.ImageColorMapping = "rbxassetid://4155801252";
 
 -- Template identifiers for easy config usage: Template = Ronix, Template = ThanHub, Template = H4xScripts
@@ -231,24 +232,36 @@ local ThanHub = "ThanHub";
 local RonixStudios = "Ronix";
 local H4xScripts = "H4xScripts";
 local H4x = "H4xScripts";
+local Liyhub = "Liyhub";
+local LiyHub = "Liyhub";
+local LIYHUB = "Liyhub";
 if getgenv then
 	getgenv().Ronix = "Ronix";
 	getgenv().ThanHub = "ThanHub";
 	getgenv().RonixStudios = "Ronix";
 	getgenv().H4xScripts = "H4xScripts";
 	getgenv().H4x = "H4xScripts";
+	getgenv().Liyhub = "Liyhub";
+	getgenv().LiyHub = "Liyhub";
+	getgenv().LIYHUB = "Liyhub";
 end;
 _G.Ronix = "Ronix";
 _G.ThanHub = "ThanHub";
 _G.RonixStudios = "Ronix";
 _G.H4xScripts = "H4xScripts";
 _G.H4x = "H4xScripts";
+_G.Liyhub = "Liyhub";
+_G.LiyHub = "Liyhub";
+_G.LIYHUB = "Liyhub";
 if shared then
 	shared.Ronix = "Ronix";
 	shared.ThanHub = "ThanHub";
 	shared.RonixStudios = "Ronix";
 	shared.H4xScripts = "H4xScripts";
 	shared.H4x = "H4xScripts";
+	shared.Liyhub = "Liyhub";
+	shared.LiyHub = "Liyhub";
+	shared.LIYHUB = "Liyhub";
 end;
 
 NeverLose.Templates = {
@@ -302,9 +315,28 @@ NeverLose.Templates = {
 		Watermark = "H4xScripts",
 		DefaultOnline = 4255,
 		DefaultTotal = 256172
+	},
+	Liyhub = {
+		Name = "LiyHub",
+		LogoChoice = "Liyhub",
+		GetLogo = function() return NeverLose.LiyhubLogo or NeverLose.GlobalLogo end,
+		ConfigFolder = "LiyhubConfigs",
+		DiscordName = "LiyHub",
+		DiscordLink = "discord.gg/uzmG4nsjmu",
+		DiscordInvite = "https://discord.gg/uzmG4nsjmu",
+		DiscordApi = "https://discord.com/api/v10/invites/uzmG4nsjmu?with_counts=true",
+		DefaultStats = "● 300 Online  •  2.7k Total",
+		IconUrl = "https://cdn.discordapp.com/icons/1393871612876423199/ed297f8387f9141a3d7895c36a09dfe8.png?size=128",
+		AssetFolder = "Liyhub_Assets",
+		IconFileName = "liyhub_icon.png",
+		Watermark = "LiyHub",
+		DefaultOnline = 296,
+		DefaultTotal = 2737
 	}
 };
 NeverLose.Templates.H4x = NeverLose.Templates.H4xScripts;
+NeverLose.Templates.LiyHub = NeverLose.Templates.Liyhub;
+NeverLose.Templates.LIYHUB = NeverLose.Templates.Liyhub;
 
 local function downloadAssetFile(url, filePath)
 	if isfile and isfile(filePath) and getcustomasset then
@@ -367,6 +399,21 @@ if getcustomasset then
 			NeverLose.H4xScriptsLogo = asset;
 			if NeverLose.ActiveWindow and NeverLose.ActiveWindow.LogoImage then
 				if NeverLose.ActiveWindow.LogoChoice == "H4xScripts" or NeverLose.ActiveWindow.LogoChoice == "H4x" then
+					NeverLose.ActiveWindow.LogoImage.Image = asset;
+					NeverLose.ActiveWindow.LogoImage.ImageColor3 = Color3.fromRGB(255, 255, 255);
+				end;
+			end;
+		end;
+	end);
+
+	-- 4. LiyHub Discord Logo (https://discord.gg/uzmG4nsjmu)
+	task.spawn(function()
+		local liyhubUrl = "https://cdn.discordapp.com/icons/1393871612876423199/ed297f8387f9141a3d7895c36a09dfe8.png?size=256";
+		local asset = downloadAssetFile(liyhubUrl, dir .. '/liyhub_logo.png');
+		if asset then
+			NeverLose.LiyhubLogo = asset;
+			if NeverLose.ActiveWindow and NeverLose.ActiveWindow.LogoImage then
+				if NeverLose.ActiveWindow.LogoChoice == "Liyhub" or NeverLose.ActiveWindow.LogoChoice == "LiyHub" or NeverLose.ActiveWindow.LogoChoice == "LIYHUB" then
 					NeverLose.ActiveWindow.LogoImage.Image = asset;
 					NeverLose.ActiveWindow.LogoImage.ImageColor3 = Color3.fromRGB(255, 255, 255);
 				end;
@@ -4107,7 +4154,7 @@ end;
 function NeverLose:CreateWindow(Config)
 	Config = Config or {};
 
-	-- 1. Resolve Template (Ronix / ThanHub / H4xScripts)
+	-- 1. Resolve Template (Ronix / ThanHub / H4xScripts / LiyHub)
 	local templateKey = "ThanHub";
 	if Config.Template then
 		local t = string.lower(tostring(Config.Template));
@@ -4115,6 +4162,8 @@ function NeverLose:CreateWindow(Config)
 			templateKey = "Ronix";
 		elseif string.find(t, "h4x") then
 			templateKey = "H4xScripts";
+		elseif string.find(t, "liy") then
+			templateKey = "Liyhub";
 		elseif string.find(t, "than") then
 			templateKey = "ThanHub";
 		end;
@@ -4122,6 +4171,8 @@ function NeverLose:CreateWindow(Config)
 		templateKey = "Ronix";
 	elseif Config.Logo == "H4x" or Config.Logo == "h4x" or Config.Logo == "H4xScripts" or Config.Logo == "h4xscripts" or Config.Logo == NeverLose.H4xLogo or Config.Logo == NeverLose.H4xScriptsLogo then
 		templateKey = "H4xScripts";
+	elseif Config.Logo == "Liyhub" or Config.Logo == "liyhub" or Config.Logo == "LiyHub" or Config.Logo == "LIYHUB" or Config.Logo == NeverLose.LiyhubLogo then
+		templateKey = "Liyhub";
 	end;
 
 	local template = NeverLose.Templates[templateKey] or NeverLose.Templates.ThanHub;
@@ -4131,7 +4182,7 @@ function NeverLose:CreateWindow(Config)
 		local t = NeverLose.Templates[tKey] or NeverLose.Templates.ThanHub;
 		if isfile and getcustomasset then
 			local dir = 'NLAssets';
-			local defaultPath = dir .. '/' .. (tKey == "Ronix" and "ronix_logo.png" or (tKey == "H4xScripts" and "h4x_logo.png" or "thanhub_logo.png"));
+			local defaultPath = dir .. '/' .. (tKey == "Ronix" and "ronix_logo.png" or (tKey == "H4xScripts" and "h4x_logo.png" or (tKey == "Liyhub" and "liyhub_logo.png" or "thanhub_logo.png")));
 			if isfile(defaultPath) then
 				return getcustomasset(defaultPath);
 			end;
@@ -4155,6 +4206,9 @@ function NeverLose:CreateWindow(Config)
 		elseif Config.Logo == "H4x" or Config.Logo == "h4x" or Config.Logo == "H4xScripts" or Config.Logo == "h4xscripts" or Config.Logo == NeverLose.H4xLogo or Config.Logo == NeverLose.H4xScriptsLogo then
 			Config.Logo = getPrecachedLogo("H4xScripts");
 			logoChoice = "H4xScripts";
+		elseif Config.Logo == "Liyhub" or Config.Logo == "liyhub" or Config.Logo == "LiyHub" or Config.Logo == "LIYHUB" or Config.Logo == NeverLose.LiyhubLogo then
+			Config.Logo = getPrecachedLogo("Liyhub");
+			logoChoice = "Liyhub";
 		elseif Config.Logo == "" or Config.Logo == NeverLose.GlobalLogo then
 			Config.Logo = defaultTemplateLogo;
 		end;
@@ -4176,7 +4230,7 @@ function NeverLose:CreateWindow(Config)
 	Config = NeverLose:ProcessParams(Config , {
 		Logo = Config.Logo or template.GetLogo(),
 		Name = Config.Name or defaultName,
-		Content = (templateKey == "Ronix" and "Ronix Studios") or (templateKey == "H4xScripts" and "H4xScripts") or "Counter-Strike 2",
+		Content = (templateKey == "Ronix" and "Ronix Studios") or (templateKey == "H4xScripts" and "H4xScripts") or (templateKey == "Liyhub" and "LiyHub") or "Counter-Strike 2",
 		Size = UDim2.new(0, 640, 0, 480),
 		ConfigFolder = Config.ConfigFolder or template.ConfigFolder,
 		Enable3DRenderer = false,
@@ -4907,6 +4961,8 @@ function NeverLose:CreateWindow(Config)
 					elseif templateKey == "H4xScripts" then
 						NeverLose.H4xLogo = assetId;
 						NeverLose.H4xScriptsLogo = assetId;
+					elseif templateKey == "Liyhub" then
+						NeverLose.LiyhubLogo = assetId;
 					end;
 				end;
 			end);
@@ -7536,6 +7592,9 @@ if getgenv then
 	getgenv().RonixStudios = "Ronix";
 	getgenv().H4xScripts = "H4xScripts";
 	getgenv().H4x = "H4xScripts";
+	getgenv().Liyhub = "Liyhub";
+	getgenv().LiyHub = "Liyhub";
+	getgenv().LIYHUB = "Liyhub";
 end;
 _G.NeverLose = NeverLose;
 _G.Neverlose = NeverLose;
@@ -7544,6 +7603,9 @@ _G.ThanHub = "ThanHub";
 _G.RonixStudios = "Ronix";
 _G.H4xScripts = "H4xScripts";
 _G.H4x = "H4xScripts";
+_G.Liyhub = "Liyhub";
+_G.LiyHub = "Liyhub";
+_G.LIYHUB = "Liyhub";
 if shared then
 	shared.NeverLose = NeverLose;
 	shared.Neverlose = NeverLose;
@@ -7552,6 +7614,9 @@ if shared then
 	shared.RonixStudios = "Ronix";
 	shared.H4xScripts = "H4xScripts";
 	shared.H4x = "H4xScripts";
+	shared.Liyhub = "Liyhub";
+	shared.LiyHub = "Liyhub";
+	shared.LIYHUB = "Liyhub";
 end;
 
 return NeverLose;
